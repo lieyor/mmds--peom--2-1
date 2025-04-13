@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aircraft Flight Dynamics Simulator</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Симулятор динаміки польоту літака</h1>
+        
+        <div class="controls">
+            <button id="btnPitchAngle">Кут тангажу</button>
+            <button id="btnVerticalVelocity">Кут нахилу траєкторії</button>
+            <button id="btnAngleOfAttack">Кут атаки</button>
+            <button id="btnVerticalLoad">Вертикальне перенавантаження</button>
+            <button id="btnClearAll">Скинути все</button>
+        </div>
+        <div class="control-laws">
+            
+            <div class="radio-group">
+                <label>
+                    <input type="radio" name="controlLaw" value="1" checked> 
+                    Перший закон для руля висоти (демпфер вимкнено)
+                </label>
+                <label>
+                    <input type="radio" name="controlLaw" value="2"> 
+                    Другий закон для руля висоти (демпфер увімкнено)
+                </label>
+                <label>
+                    <input type="radio" name="controlLaw" value="3"> 
+                    Третій закон для руля висоти (демпфер увімкнено)
+                </label>
+            </div>
+        
+        <div class="main-content">
+            <div class="chart-container">
+                <canvas id="dynamicsChart"></canvas>
+            </div>
+            
+            <div class="data-grid-container">
+                <table id="dataGrid">
+                    <thead>
+                        <tr>
+                            <th>Час (с)</th>
+                            <th>Значення</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="coefficients-container">
+            <h3>Коефіцієнти</h3>
+            <div id="coefficients">
+                
+            </div>
+        </div>
+        
+        <div class="parameters">
+            <div class="parameter-section">
+                <h3>Параметри литака</h3>
+                <div class="parameter-grid">
+                    <div class="parameter">
+                        <label>Площа крила:</label>
+                        <span>201.45 m²</span>
+                    </div>
+                    <div class="parameter">
+                        <label>Сер. аеродим. хорда:</label>
+                        <span>5.285 m</span>
+                    </div>
+                    <div class="parameter">
+                        <label>Взлітна вага:</label>
+                        <span>73000 kg</span>
+                    </div>
+                    <div class="parameter">
+                        <label>Центр тяжіння:</label>
+                        <span>0.24</span>
+                    </div>
+                    <div class="parameter">
+                        <label>Поздовжній момент інерції:</label>
+                        <span>660000 kg·m²</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="parameter-section">
+                <h3>Параметри польоту</h3>
+                <div class="parameter-grid">
+                    <div class="parameter">
+                        <label>Початкова швидкість:</label>
+                        <span>190.0 m/s</span>
+                    </div>
+                    <div class="parameter">
+                        <label>Початкова висота:</label>
+                        <span>6400 m</span>
+                    </div>
+                    <div class="parameter">
+                        <label>Густина повітря:</label>
+                        <span>0.0636 kg/m³</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="skript.js"></script>
+</body>
+</html>

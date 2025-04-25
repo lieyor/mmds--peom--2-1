@@ -2,15 +2,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // Параметри літака 
     const vmas = [
         201.45,   // площа крила
-        5.285,    // серю аеродим. хорда
+        5.285,    // середня аеродинамічна хорда
         73000,    // взлітна вага
-        0.24,     // центр тяж
+        0.24,     // центр тяжіння
         660000,   // Поздовжній момент інерції, параметри польоту та аеродинамічні характеристики літака
         190.0,    // V0
         6400,     // H0
-        0.0636,   // ρ
+        0.0636,   // ρ густина
         314.34,   // aн
-        9.81,     // g сила тяж
+        9.81,     // g сила тяжіння
         -0.280,   // Cy0
         5.90,     // c^a_y
         0.2865,   // c^б_y
@@ -22,45 +22,55 @@ document.addEventListener('DOMContentLoaded', function() {
         -0.92
     ];
 
-    // Ініціалізація змінних
-    let NY = 0;   // Вертикальне навантаження
-    let DV, DVS = -2, DVD, KS = 0.112, Kwz = 1, Twz = 0.7, XV = 17.86; // керув 
-    const step = 0.06;
+        // ІНІЦІЛІЗАЦІЯ ЗМІННИХ
+    let NY = 0; // Вертикальне навантаження (можливо, сила або тиск у напрямку Y)
+
+    let DV, DVS = -2, DVD, KS = 0.112, Kwz = 1, Twz = 0.7, XV = 17.86;
+    // DV — змінна (неініціалізована), можливо, означає швидкість або зсув
+    // DVS = -2 — деяке початкове значення, ймовірно, для диференціала швидкості чи зміщення
+    // DVD — ще одна змінна без початкового значення, скоріше за все похідна DV
+    // KS = 0.112 — коефіцієнт жорсткості або стабілізації
+    // Kwz = 1 — коефіцієнт впливу, можливо, у керуванні
+    // Twz = 0.7 — часова константа або затримка
+    // XV = 17.86 — значення, ймовірно, координата або змінна для розрахунків (наприклад, швидкість чи відстань)
+
+    const step = 0.06; // Крок інтегрування або оновлення (часовий або просторовий інтервал)
     
-    // Вибір закону про управління
-    let selectedControlLaw = 1; // поумолчанію І закон 
+    // ВИБІР ЗАКОНУ ПРО УПРАВЛІННЯ
+    let selectedControlLaw = 1; // За замовчуванням вибрано І закон керування
     
-    // Функція для розрахунку DVD на основі обраного закону керування
+    // ФУНКЦІЯ ДЛЯ РОЗРАХУНКУ DVD НА ОСНОВІ ОБРАНОГО ЗАКОНУ КЕРУВАННЯ
     function calculateDVD(Y) {
         if (selectedControlLaw === 1) {
-            return 0; // І зак демпфер офф
+            return 0; // І закон: демпфер вимкнено (немає впливу)
         } else if (selectedControlLaw === 2) {
-            return Kwz * Y[1]; // ІІ зак демпфер он
+            return Kwz * Y[1]; // ІІ закон: демпфер увімкнено, враховується перша координата Y
         } else {
-            return Kwz * Y[1] - Y[4] / Twz; // ІІІ зак демпфер он
+            return Kwz * Y[1] - Y[4] / Twz; // ІІІ закон: демпфер увімкнено, враховується Y[1] та швидкість зміни (Y[4]) з часом затухання Twz
         }
     }
+    // ІНІЦІЛІЗАЦІЯ ДІАГРАМИ 
+    const ctx = document.getElementById('dynamicsChart').getContext('2d'); 
+    // Отримуємо контекст 2D-графіки з елементу <canvas> з id='dynamicsChart'
 
-    // инітіал діаграми
-    const ctx = document.getElementById('dynamicsChart').getContext('2d');
-    const chart = new Chart(ctx, {
-        type: 'line',
+    const chart = new Chart(ctx, { // Створюємо нову лінійну діаграму за допомогою бібліотеки Chart.js
+        type: 'line', // Тип діаграми — лінійна
         data: {
-            labels: [],
-            datasets: [
+            labels: [], // Порожній масив для міток по осі X (зазвичай це час)
+            datasets: [ // Масив графіків, які будуть виводитися
                 {
-                    label: 'Кут тангажу',
-                    data: [],
-                    borderColor: 'rgb(75, 192, 192)',
-                    tension: 0.1,
-                    hidden: false
+                    label: 'Кут тангажу', // Назва графіка
+                    data: [], // Дані для графіка (заповнюються динамічно)
+                    borderColor: 'rgb(75, 192, 192)', // Колір лінії
+                    tension: 0.1, // Згладжування лінії
+                    hidden: false // Цей графік видно за замовчуванням
                 },
                 {
-                    label: 'Кут нахилу тарєкторії',
+                    label: 'Кут нахилу траєкторії',
                     data: [],
                     borderColor: 'rgb(255, 99, 132)',
                     tension: 0.1,
-                    hidden: true
+                    hidden: true // Цей графік спочатку прихований
                 },
                 {
                     label: 'Кут атаки',
@@ -79,43 +89,55 @@ document.addEventListener('DOMContentLoaded', function() {
             ]
         },
         options: {
-            responsive: true,
+            responsive: true, // Графік автоматично підлаштовується під розмір контейнера
             scales: {
                 x: {
                     title: {
                         display: true,
-                        text: 'Time (s)'
+                        text: 'Time (s)' // Назва осі X — Час (в секундах)
                     }
                 },
                 y: {
                     title: {
                         display: true,
-                        text: 'Value'
+                        text: 'Value' // Назва осі Y — Значення
                     }
                 }
             }
         }
     });
 
-    // очищ граф / коф / даніе часу и знач
+    // ОЧИЩЕННЯ ГРАФИКА / КОЕФІЦІЄНТІВ / ДАННА ЧАСУ ТА ЗНАЧЕННЯ
     function clearData() {
-        chart.data.labels = [];
+        chart.data.labels = []; 
+        // Очищаємо мітки по осі X (тобто час) на графіку
+
         chart.data.datasets.forEach(dataset => {
             dataset.data = [];
         });
-        chart.update();
-        
-        const tableBody = document.querySelector('#dataGrid tbody');
-        tableBody.innerHTML = '';
-        
-        const coefficientsContainer = document.getElementById('coefficients');
-        coefficientsContainer.innerHTML = '';
+        // Проходимося по кожному графіку (dataset) та очищаємо його дані
+
+        chart.update(); 
+        // Оновлюємо графік після очищення, щоб зміни були видимі
+
+        const tableBody = document.querySelector('#dataGrid tbody'); 
+        // Отримуємо тіло таблиці з ID "dataGrid", щоб очистити з неї дані
+
+        tableBody.innerHTML = ''; 
+        // Видаляємо всі рядки з таблиці (результати попередньої симуляції)
+
+        const coefficientsContainer = document.getElementById('coefficients'); 
+        // Отримуємо контейнер, у якому показуються коефіцієнти (параметри керування)
+
+        coefficientsContainer.innerHTML = ''; 
+        // Очищаємо цей контейнер від попередніх значень
     }
-    
-    // покаж кофф
+        
+    // ПОКАЗ ГРАФІКУ
     function displayCoefficients(C, balanced) {
         const coefficientsContainer = document.getElementById('coefficients');
         coefficientsContainer.innerHTML = '';
+        // Знаходимо HTML-елемент, де будуть показуватись коефіцієнти, і очищаємо його
         
         // показ С кофф
         for (let i = 1; i < 17; i++) {
@@ -218,7 +240,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function calculatePitchAngle() {
         clearData();
         
-        // поздовж нах / прихов інш
+        // кут тангажу / прихов інш
         chart.data.datasets.forEach((dataset, i) => {
             dataset.hidden = (i !== 0);
         });
@@ -513,3 +535,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Ініціалізація з розрахунком кута тангажу
     calculatePitchAngle();
 });
+
+
+
+
+const reverseFn = (numberInt) => {
+    numberInt.split('').reverse().join('')
+    return Number(numberInt)
+}

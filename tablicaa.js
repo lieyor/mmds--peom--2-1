@@ -1,6 +1,6 @@
 const cyBal = (73000) / (201.45 * 562.68) // коф підіймальной сили для горизонт польоту
 const alphaBal = 57.3 * ((cyBal + 0.28) / (5.9)) // кут атаки. при якому досягається балансування
-const deltaVBal = -57.3 * (0.283 + (-1.95 * alphaBal) / 57.3) / 0.92;  //бал відхил руля
+const deltaVBal = -57.3 * (0.283 + (-1.95 * alphaBal) / 57.3) ;  //бал відхил руля
 const zapasStiykosti = (-1.95 / 5.9 ) + (0.0636 * 201.45 * 5.285) / (73000 / 9.81) * (-13.4) // запас стійкості
 const vytrataRula = -57.3 * zapasStiykosti * (0.3 / -0.92 ) // витрата руля
 
@@ -20,7 +20,7 @@ function calculate() {
     const V = 130;       // швидкість (м/с)
     const rho = 0.0636;  // густина повітря (кг/м³)
   
-    // Точні коефіцієнти для t_pp = 6 с
+    // Точні коефіцієнти для 
     const Cm_alpha = -0.08;   // Похідна моменту (зменшено)
     const Cz_alpha = 0.85;    // Похідна підйомної сили (зменшено)
     const Cz_delta = 0.35;    // Ефективність руля (зменшено)
@@ -80,10 +80,10 @@ function calculate() {
 // Виклик функції
 try {
     const resultT = calculateTa();
-    console.log("Період коливань Tₐ:", resultT.Ta);         // 6.00 с
-    console.log("Власна частота ωₙ:", resultT.omega_n);     // 1.047 рад/с
-    console.log("Коефіцієнт демпфування ζ:", resultT.zeta); // 0.30
-    console.log("Формула:", resultT.formula);
+    console.log(" Tₐ:", resultT.Ta);         // 6.00 с
+     // 1.047 рад/с
+    
+    
 } catch (error) {
     console.error("Помилка розрахунку:", error.message);
 }

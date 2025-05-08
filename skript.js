@@ -267,8 +267,8 @@ document.addEventListener('DOMContentLoaded', function() {
         C[3] = -(vmas[18] / vmas[4]) * vmas[0] * vmas[1] * ((vmas[7] * Math.pow(vmas[5], 2)) / 2);
         C[4] = ((vmas[11] + vmas[13]) / m) * vmas[0] * ((vmas[7] * vmas[5]) / 2);
         C[5] = -(vmas[16] / vmas[4]) * vmas[0] * Math.pow(vmas[1], 2) * ((vmas[7] * vmas[5]) / 2);
-        C[6] = (vmas[12] / m) * vmas[0] * ((vmas[7] * vmas[5]) / 2);
-        C[7] = vmas[5] / (m * vmas[9]);
+        C[9] = (vmas[12] / m) * vmas[0] * ((vmas[7] * vmas[5]) / 2);
+        C[16] = vmas[5] / (m * vmas[9]);
         
         // ініт Х та У
         const X = [0, 0, 0, 0, 0];
@@ -293,9 +293,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // розр Х
             X[0] = Y[1];
             X[1] = -C[1] * Y[1] - C[2] * Y[3] - C[5] * X[3] - C[3] * DV;
-            X[2] = C[4] * Y[3] + C[6] * DV;
+            X[2] = C[4] * Y[3] + C[9] * DV;
             X[3] = X[0] - X[2];
-            NY = C[7] * X[2];
+            NY = C[16] * X[2];
             
             // метод ейлера розр У 
             for (let i = 0; i < 5; i++) {
@@ -336,8 +336,8 @@ document.addEventListener('DOMContentLoaded', function() {
         C[3] = -(vmas[18] / vmas[4]) * vmas[0] * vmas[1] * ((vmas[7] * Math.pow(vmas[5], 2)) / 2);
         C[4] = ((vmas[11] + vmas[13]) / m) * vmas[0] * ((vmas[7] * vmas[5]) / 2);
         C[5] = -(vmas[16] / vmas[4]) * vmas[0] * Math.pow(vmas[1], 2) * ((vmas[7] * vmas[5]) / 2);
-        C[6] = (vmas[12] / m) * vmas[0] * ((vmas[7] * vmas[5]) / 2);
-        C[7] = vmas[5] / (m * vmas[9]);
+        C[9] = (vmas[12] / m) * vmas[0] * ((vmas[7] * vmas[5]) / 2);
+        C[16] = vmas[5] / (m * vmas[9]);
         
         // поч Х та У кофф
         const X = [0, 0, 0, 0, 0];
@@ -362,9 +362,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // розр Х
             X[0] = Y[1]; // тангаж
             X[1] = -C[1] * Y[1] - C[2] * Y[3] - C[5] * X[3] - C[3] * DV; // кутова шв
-            X[2] = C[4] * Y[3] + C[6] * DV; //нахил траєкт
+            X[2] = C[4] * Y[3] + C[9] * DV; //нахил траєкт
             X[3] = X[0] - X[2]; // кут атаки
-            NY = C[7] * X[2];// верт перенав
+            NY = C[16] * X[2];// верт перенав
             
             // метод Ейлера розр У
             for (let i = 0; i < 5; i++) {
@@ -405,8 +405,8 @@ document.addEventListener('DOMContentLoaded', function() {
         C[3] = -(vmas[18] / vmas[4]) * vmas[0] * vmas[1] * ((vmas[7] * Math.pow(vmas[5], 2)) / 2);
         C[4] = ((vmas[11] + vmas[13]) / m) * vmas[0] * ((vmas[7] * vmas[5]) / 2);
         C[5] = -(vmas[16] / vmas[4]) * vmas[0] * Math.pow(vmas[1], 2) * ((vmas[7] * vmas[5]) / 2);
-        C[6] = (vmas[12] / m) * vmas[0] * ((vmas[7] * vmas[5]) / 2);
-        C[7] = vmas[5] / (m * vmas[9]);
+        C[9] = (vmas[12] / m) * vmas[0] * ((vmas[7] * vmas[5]) / 2);
+        C[16] = vmas[5] / (m * vmas[9]);
         
         // поч Х та У кофф
         const X = [0, 0, 0, 0, 0];
@@ -431,9 +431,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // розр х
             X[0] = Y[1];
             X[1] = -C[1] * Y[1] - C[2] * Y[3] - C[5] * X[3] - C[3] * DV;
-            X[2] = C[4] * Y[3] + C[6] * DV;
+            X[2] = C[4] * Y[3] + C[9] * DV;
             X[3] = X[0] - X[2];
-            NY = C[7] * X[2];
+            NY = C[16] * X[2];
             
             // Метод Ейлера розо У
             for (let i = 0; i < 5; i++) {
@@ -464,7 +464,20 @@ document.addEventListener('DOMContentLoaded', function() {
         chart.data.datasets.forEach((dataset, i) => {
             dataset.hidden = (i !== 3);
         });
-        
+    
+        // Обновляем настройки оси Y для этого графика
+        chart.options.scales.y = {
+            title: {
+                display: true,
+                text: 'Value'
+            },
+            // min: -0.5,  // Минимальное значение
+            // max: 0.5,   // Максимальное значение
+            ticks: {
+                stepSize: 0.1  // Шаг значений
+            }
+        };
+    
         const m = vmas[2] / vmas[9];
         const C = new Array(17).fill(0);
         
@@ -472,10 +485,8 @@ document.addEventListener('DOMContentLoaded', function() {
         C[1] = -(vmas[15] / vmas[4]) * vmas[0] * Math.pow(vmas[1], 2) * ((vmas[7] * vmas[5]) / 2);
         C[2] = -(vmas[17] / vmas[4]) * vmas[0] * vmas[1] * ((vmas[7] * Math.pow(vmas[5], 2)) / 2);
         C[3] = -(vmas[18] / vmas[4]) * vmas[0] * vmas[1] * ((vmas[7] * Math.pow(vmas[5], 2)) / 2);
-        C[4] = ((vmas[11] + vmas[13]) / m) * vmas[0] * ((vmas[7] * vmas[5]) / 2);
-        C[5] = -(vmas[16] / vmas[4]) * vmas[0] * Math.pow(vmas[1], 2) * ((vmas[7] * vmas[5]) / 2);
-        C[6] = (vmas[12] / m) * vmas[0] * ((vmas[7] * vmas[5]) / 2);
-        C[7] = vmas[5] / (m * vmas[9]);
+        C[4] = ((vmas[11] + vmas[13]) / m) * vmas[0] * ((vmas[7] * vmas[5]) /2);
+        C[16] = vmas[5] / (m * vmas[9]);
         
         // поч Х У 
         const X = [0, 0, 0, 0, 0];
@@ -486,7 +497,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const a_bal = 57.3 * ((c_ybal - vmas[10]) / vmas[11]);
         const D_bal = -57.3 * (((vmas[14] + vmas[17] * a_bal) / 57.3) + (c_ybal * (vmas[3] - 0.24))) / vmas[18];
         
-        // 
         let T = 0;
         const DT = step;
         const timeValues = [];
@@ -500,22 +510,25 @@ document.addEventListener('DOMContentLoaded', function() {
             // розр Х
             X[0] = Y[1];
             X[1] = -C[1] * Y[1] - C[2] * Y[3] - C[5] * X[3] - C[3] * DV;
-            X[2] = C[4] * Y[3] + C[6] * DV;
+            X[2] = C[4] * Y[3] + C[9] * DV;
             X[3] = X[0] - X[2];
-            NY = C[7] * X[2];
+            NY = C[16] * X[2];
             
             // м Ейлера розр У
             for (let i = 0; i < 5; i++) {
                 Y[i] = Y[i] + X[i] * DT;
             }
             
+            // Умножаем NY на 100 для масштабирования значений (0.0020 -> 0.2)
+            const scaledNY = NY * 100;
+            
             // дод граф даніе та сітки
             timeValues.push(T);
-            verticalLoads.push(NY);
+            verticalLoads.push(scaledNY);
             
             // дод до граф
             chart.data.labels.push(T.toFixed(2));
-            chart.data.datasets[3].data.push(NY);
+            chart.data.datasets[3].data.push(scaledNY);
             
             T += DT;
         }
@@ -524,6 +537,43 @@ document.addEventListener('DOMContentLoaded', function() {
         updateDataGrid(timeValues, verticalLoads);
         displayCoefficients(C, { c_ybal, a_bal, D_bal });
     }
+
+    // онов сітки даніх
+function updateDataGrid(timeValues, dataValues, maxRows = 15) {
+    const tableBody = document.querySelector('#dataGrid tbody');
+    tableBody.innerHTML = '';
+    
+    // Відображати значення кожні 0.5 секунди
+    const step = 0.5;
+    const endTime = 20;
+    
+    for (let T = 0; T <= endTime; T += step) {
+        // Знаходимо індекс найближчого часу в масиві timeValues
+        let closestIndex = 0;
+        let minDiff = Infinity;
+        
+        for (let i = 0; i < timeValues.length; i++) {
+            const diff = Math.abs(timeValues[i] - T);
+            if (diff < minDiff) {
+                minDiff = diff;
+                closestIndex = i;
+            }
+        }
+        
+        // Створюємо рядок таблиці
+        const row = document.createElement('tr');
+        
+        const timeCell = document.createElement('td');
+        timeCell.textContent = T.toFixed(1) + 's';
+        
+        const valueCell = document.createElement('td');
+        valueCell.textContent = dataValues[closestIndex].toFixed(6);
+        
+        row.appendChild(timeCell);
+        row.appendChild(valueCell);
+        tableBody.appendChild(row);
+    }
+}
 
     // лісенері кнопок
     document.getElementById('btnPitchAngle').addEventListener('click', calculatePitchAngle);
@@ -548,6 +598,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Ініціалізація з розрахунком кута тангажу
     calculatePitchAngle();
 });
+let DVS = -2
 
 
 
@@ -556,3 +607,5 @@ const reverseFn = (numberInt) => {
     numberInt.split('').reverse().join('')
     return Number(numberInt)
 }
+
+console.log((DVS)/NY);
